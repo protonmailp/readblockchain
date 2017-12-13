@@ -1,38 +1,51 @@
 import redis
 from bitcoinrpc.authproxy import AuthServiceProxy, JSONRPCException
 import time
+import pika
+import json
 
-from elasticsearch import Elasticsearch
-from elasticsearch.helpers import bulk
 
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
-es = Elasticsearch()
+
 
 
 rpc_user ="admin"
 rpc_password = "admin"
-rpc_connection = AuthServiceProxy("http://%s:%s@127.0.0.1:8332"%(rpc_user, rpc_password))
+rpc_connection = AuthServiceProxy("http://%s:%s@127.0.0.1:18332"%(rpc_user, rpc_password))
+
+connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+channel = connection.channel()
+channel.queue_declare(queue='rawtransactions')
 
 
-
-step =100
-for i in range(0,30000000):
-    a=[]
+step =500
+for i in range(0,300000000,step):
+    print(i)
+    txs=[]
+    heights=[]
     for j in range(step):
-        a.append(r.rpop("txs").decode("utf-8"))
-    commands = [["getrawtransaction", blocktx,1] for blocktx in a]
-    rawtransactions = rpc_connection.batch_(commands)
-    bodys = []
-    for rawtransaction in rawtransactions:
-        body = {
-            '_type': 'transactions',
-            '_id': rawtransaction['txid'],
-            '_op_type': 'index',
-            'doc': rawtransaction
-        }
-        bodys.append(body)
-    success, _ = bulk(es, bodys, index='bitcoin')
+        ss = r.rpop("heighttx").decode("utf-8")
+        sss= ss.split(':')
+        heights.append(sss[0])
+        txs.append(sss[1])
+
+    commands = [["getrawtransaction", tx] for tx in txs]
+    hexs = rpc_connection.batch_(commands)
+
+    jieguos=[]
+    for ii,hex in enumerate(hexs):
+        jieguos.append(heights[ii]+":"+txs[ii]+":"+hex)
+
+    for jieguo in jieguos:
+        r.lpush("heighttxhex", jieguo)
+
+
+        # channel.basic_publish(exchange='',
+        #                       routing_key='rawtransactions',
+        #                       body=json.dumps(body))
+
+
 
 
 

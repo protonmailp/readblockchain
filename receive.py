@@ -8,8 +8,8 @@ channel = connection.channel()
 channel.queue_declare(queue='gege')
 
 def callback(ch, method, properties, body):
-    print(" [x] Received %r" )
-    print(json.loads(body)["sex"])
+
+    print(" sex : {} ,age: {}".format(json.loads(body)["sex"],json.loads(body)["age"]))
 
 channel.basic_consume(callback,
                       queue='gege',
