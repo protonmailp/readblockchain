@@ -1,0 +1,26 @@
+{
+  "name": "readblockchain",
+  "version": "1.0.0",
+  "description": "",
+  "main": "requestelastic.js",
+  "dependencies": {
+    "amqplib": "^0.5.2",
+    "leveldown": "^2.1.1",
+    "levelup": "^2.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/protonmailp/readblockchain.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/protonmailp/readblockchain/issues"
+  },
+  "homepage": "https://github.com/protonmailp/readblockchain#readme"
+}

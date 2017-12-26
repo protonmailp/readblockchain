@@ -1,11 +1,9 @@
-import redis
+
 from bitcoinrpc.authproxy import AuthServiceProxy, JSONRPCException
 import time
 import pika
 import json
 
-
-r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 
 
